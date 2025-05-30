@@ -62,8 +62,8 @@ const Calendar: React.FC = () => {
   const handleAddEvent = (e: React.FormEvent) => {
     e.preventDefault();
     if (newEventTitle && selectedDate) {
-      const calendarApi = selectedDate.view.calendar; 
-      calendarApi.unselect(); 
+      const calendarApi = selectedDate.view.calendar;
+      calendarApi.unselect();
 
       const newEvent = {
         id: `${selectedDate.start.toISOString()}-${newEventTitle}`,
@@ -79,15 +79,15 @@ const Calendar: React.FC = () => {
   };
 
   return (
-    <div>
-      <div className="flex w-full px-10 justify-start items-start gap-8">
-        <div className="w-3/12">
-          <div className="py-10 text-2xl font-extrabold px-7">
+    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+      <div className="flex w-full px-10 justify-start items-start gap-8 mt-10 max-w-screen-xl mx-auto">
+        <div className="w-3/12 border border-[var(--border)] rounded-[var(--radius)] p-6 shadow-sm bg-[var(--card)]">
+          <div className="border border-[var(--border)] rounded-[var(--radius)] p-3 text-2xl font-semibold text-center bg-[var(--muted)] text-[var(--foreground)] mb-5">
             Calendar Events
           </div>
           <ul className="space-y-4">
             {currentEvents.length <= 0 && (
-              <div className="italic text-center text-gray-400">
+              <div className="italic text-center text-muted-foreground">
                 No Events Present
               </div>
             )}
@@ -95,70 +95,73 @@ const Calendar: React.FC = () => {
             {currentEvents.length > 0 &&
               currentEvents.map((event: EventApi) => (
                 <li
-                  className="border border-gray-200 shadow px-4 py-2 rounded-md text-blue-800"
                   key={event.id}
+                  className="border border-[var(--border)] bg-[var(--card)] shadow px-4 py-2 rounded-[var(--radius)] text-[var(--primary)]"
                 >
                   {event.title}
                   <br />
-                  <label className="text-slate-950">
+                  <label className="text-[var(--foreground)] text-sm">
                     {formatDate(event.start!, {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
-                    })}{" "}
+                    })}
                   </label>
                 </li>
               ))}
           </ul>
         </div>
 
+ 
         <div className="w-9/12 mt-8">
           <FullCalendar
-            height={"85vh"}
+            height="85vh"
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             headerToolbar={{
               left: "prev,next today",
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-            }} 
-            initialView="dayGridMonth" 
-            editable={true} 
-            selectable={true} 
-            selectMirror={true} 
-            dayMaxEvents={true} 
-            select={handleDateClick} 
-            eventClick={handleEventClick} 
-            eventsSet={(events) => setCurrentEvents(events)} 
+            }}
+            initialView="dayGridMonth"
+            editable
+            selectable
+            selectMirror
+            dayMaxEvents
+            select={handleDateClick}
+            eventClick={handleEventClick}
+            eventsSet={(events) => setCurrentEvents(events)}
             initialEvents={
               typeof window !== "undefined"
                 ? JSON.parse(localStorage.getItem("events") || "[]")
                 : []
-            } 
+            }
           />
         </div>
       </div>
 
+
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-[var(--card)] text-[var(--foreground)]">
           <DialogHeader>
-            <DialogTitle>Add New Event Details</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">
+              Add New Event Details
+            </DialogTitle>
           </DialogHeader>
-          <form className="space-x-5 mb-4" onSubmit={handleAddEvent}>
+          <form className="space-x-4 mt-4" onSubmit={handleAddEvent}>
             <input
               type="text"
               placeholder="Event Title"
               value={newEventTitle}
-              onChange={(e) => setNewEventTitle(e.target.value)} 
+              onChange={(e) => setNewEventTitle(e.target.value)}
               required
-              className="border border-gray-200 p-3 rounded-md text-lg"
+              className="border border-[var(--border)] p-3 rounded-[var(--radius)] text-base bg-[var(--background)] text-[var(--foreground)]"
             />
             <button
-              className="bg-green-500 text-white p-3 mt-5 rounded-md"
               type="submit"
+              className="bg-[var(--primary)] text-[var(--primary-foreground)] px-4 py-2 mt-2 rounded-[var(--radius)] hover:bg-[var(--accent)] transition"
             >
               Add
-            </button>{" "}
-
+            </button>
           </form>
         </DialogContent>
       </Dialog>
