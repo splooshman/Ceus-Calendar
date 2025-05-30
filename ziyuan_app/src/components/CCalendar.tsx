@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const Calendar: React.FC = () => {
+const CCalendar: React.FC = () => {
   const [currentEvents, setCurrentEvents] = useState<EventApi[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [newEventTitle, setNewEventTitle] = useState<string>("");
@@ -169,4 +169,4 @@ const Calendar: React.FC = () => {
   );
 };
 
-export default Calendar;
+export default CCalendar;
