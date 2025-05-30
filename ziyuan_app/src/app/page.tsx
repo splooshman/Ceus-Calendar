@@ -16,8 +16,14 @@ export default function Home() {
       </h1>
 
       <div className="flex gap-4">
-        <Button size='lg' onClick={() => router.push("/business")}>Business View</Button>
-        <Button size = 'lg' onClick={() => router.push("/customer")}>Customer View</Button>
+        <Button 
+        size='lg' 
+        className="bg-[#C2185B] text-white hover:bg-[#E57399]"
+        onClick={() => router.push("/business")}>Business View</Button>
+        <Button 
+        size = 'lg' 
+        className="bg-[#2563EB] text-white hover:bg-[#7EA8F7]"
+        onClick={() => router.push("/customer")}>Customer View</Button>
       </div>
     </main>
   );
