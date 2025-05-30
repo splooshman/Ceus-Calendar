@@ -17,6 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 const BCalendar: React.FC = () => {
   const [currentEvents, setCurrentEvents] = useState<EventApi[]>([]);
@@ -77,8 +79,10 @@ const BCalendar: React.FC = () => {
       handleCloseDialog();
     }
   };
+  const router = useRouter();
 
   return (
+
     <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
       <div className="flex w-full px-10 justify-start items-start gap-8 mt-10 max-w-screen-xl mx-auto">
         <div className="w-3/12 border border-[var(--border)] rounded-[var(--radius)] p-6 shadow-sm bg-[var(--card)]">
