@@ -11,6 +11,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import rrulePlugin from "@fullcalendar/rrule";
 import {
   Dialog,
   DialogContent,
@@ -18,15 +19,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import rrulePlugin from "@fullcalendar/rrule";
-
-
 import {
   bookingTemplates,
   timeSlots,
   maxSlots,
   BookingTemplate,
-} from "./CalenderConst";
+} from "./CalendarConst";
 
 const Calendar: React.FC = () => {
   const [currentEvents, setCurrentEvents] = useState<EventApi[]>([]);
@@ -35,6 +33,7 @@ const Calendar: React.FC = () => {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("07:00");
   const [selectedDuration, setSelectedDuration] = useState<number>(30);
+  const [selectedTutor, setSelectedTutor] = useState<string>("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -56,6 +55,7 @@ const Calendar: React.FC = () => {
     setSelectedTemplateId("");
     setSelectedTime("07:00");
     setSelectedDuration(30);
+    setSelectedTutor("");
     setIsDialogOpen(true);
   };
 
@@ -72,14 +72,16 @@ const Calendar: React.FC = () => {
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setSelectedTemplateId("");
+    setSelectedTutor("");
   };
 
   const handleAddEvent = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTemplateId) {
-      alert("Please select a class template.");
+    if (!selectedTemplateId || !selectedTutor) {
+      alert("Please select a class template and a tutor.");
       return;
     }
+
     if (selectedDate) {
       const calendarApi = selectedDate.view.calendar;
       calendarApi.unselect();
@@ -92,10 +94,7 @@ const Calendar: React.FC = () => {
         hours,
         minutes
       );
-
       const endDate = new Date(startDate.getTime() + selectedDuration * 60000);
-
-      const isRecurring = window.confirm("Make this a recurring weekly event?");
 
       const overlappingEventsCount = currentEvents.filter((event) => {
         const eventStart = event.start!;
@@ -110,17 +109,17 @@ const Calendar: React.FC = () => {
         return;
       }
 
+      const isRecurring = window.confirm("Make this a recurring weekly event?");
       const weekdayMap = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
       const byweekday = weekdayMap[startDate.getDay()];
-
       const selectedTemplate = bookingTemplates.find(
         (t) => t.id === selectedTemplateId
       )!;
 
       const newEvent = isRecurring
         ? {
-            id: `${startDate.toISOString()}-${selectedTemplate.id}`,
-            title: selectedTemplate.label,
+            id: `${startDate.toISOString()}-${selectedTemplate.id}-${selectedTutor}`,
+            title: `${selectedTemplate.label} - ${selectedTutor}`,
             rrule: {
               freq: "weekly",
               interval: 1,
@@ -133,8 +132,8 @@ const Calendar: React.FC = () => {
             borderColor: selectedTemplate.defaultColor,
           }
         : {
-            id: `${startDate.toISOString()}-${selectedTemplate.id}`,
-            title: selectedTemplate.label,
+            id: `${startDate.toISOString()}-${selectedTemplate.id}-${selectedTutor}`,
+            title: `${selectedTemplate.label} - ${selectedTutor}`,
             start: startDate,
             end: endDate,
             allDay: false,
@@ -162,7 +161,6 @@ const Calendar: React.FC = () => {
                 No Classes Scheduled
               </div>
             )}
-
             {currentEvents.length > 0 &&
               currentEvents.map((event: EventApi) => (
                 <li
@@ -226,16 +224,16 @@ const Calendar: React.FC = () => {
             </DialogTitle>
           </DialogHeader>
           <form className="space-y-4 mt-4" onSubmit={handleAddEvent}>
-            <label
-              className="block font-medium mb-1"
-              htmlFor="templateSelect"
-            >
+            <label className="block font-medium mb-1" htmlFor="templateSelect">
               Select Class Template
             </label>
             <select
               id="templateSelect"
               value={selectedTemplateId}
-              onChange={(e) => setSelectedTemplateId(e.target.value)}
+              onChange={(e) => {
+                setSelectedTemplateId(e.target.value);
+                setSelectedTutor("");
+              }}
               required
               className="w-full border border-[var(--border)] p-3 rounded-[var(--radius)] bg-[var(--background)] text-[var(--foreground)]"
             >
@@ -249,10 +247,36 @@ const Calendar: React.FC = () => {
               ))}
             </select>
 
-            <label
-              className="block font-medium mt-4 mb-1"
-              htmlFor="timeSelect"
-            >
+            {selectedTemplateId && (
+              <>
+                <label
+                  className="block font-medium mt-4 mb-1"
+                  htmlFor="tutorSelect"
+                >
+                  Select Tutor
+                </label>
+                <select
+                  id="tutorSelect"
+                  value={selectedTutor}
+                  onChange={(e) => setSelectedTutor(e.target.value)}
+                  required
+                  className="w-full border border-[var(--border)] p-3 rounded-[var(--radius)] bg-[var(--background)] text-[var(--foreground)]"
+                >
+                  <option value="" disabled>
+                    -- Choose a tutor --
+                  </option>
+                  {bookingTemplates
+                    .find((t) => t.id === selectedTemplateId)
+                    ?.tutors?.map((tutor) => (
+                      <option key={tutor} value={tutor}>
+                        {tutor}
+                      </option>
+                    ))}
+                </select>
+              </>
+            )}
+
+            <label className="block font-medium mt-4 mb-1" htmlFor="timeSelect">
               Select Start Time
             </label>
             <select
@@ -286,6 +310,31 @@ const Calendar: React.FC = () => {
               <option value={60}>60</option>
               <option value={90}>90</option>
             </select>
+
+            {selectedDate && (
+              <div className="text-sm text-muted-foreground mt-2">
+                Remaining slots for this time:{" "}
+                {maxSlots -
+                  currentEvents.filter((event) => {
+                    const [hours, minutes] = selectedTime.split(":").map(Number);
+                    const startDate = new Date(
+                      selectedDate.start.getFullYear(),
+                      selectedDate.start.getMonth(),
+                      selectedDate.start.getDate(),
+                      hours,
+                      minutes
+                    );
+                    const endDate = new Date(
+                      startDate.getTime() + selectedDuration * 60000
+                    );
+                    const eventStart = event.start!;
+                    const eventEnd =
+                      event.end || new Date(eventStart.getTime() + 30 * 60000);
+                    return startDate < eventEnd && endDate > eventStart;
+                  }).length}
+                /{maxSlots}
+              </div>
+            )}
 
             <button
               type="submit"
