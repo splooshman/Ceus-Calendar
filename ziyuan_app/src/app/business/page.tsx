@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import BCalendar from "@/components/BCalendar";
+import Calendar from "@/components/Calendar";
 
 export default function BusinessPage() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function BusinessPage() {
           </Button>
         </div>
       </div>
-      <BCalendar />
+      <Calendar />
     </main>
   );
 }
