@@ -20,70 +20,18 @@ import {
 import { useRouter } from "next/navigation";
 import rrulePlugin from "@fullcalendar/rrule";
 
-interface FieldSpec {
-  name: string;
-  label: string;
-  type: string;
-}
 
-export interface BookingTemplate {
-  id: string;
-  label: string;
-  defaultColor: string;
-  icon?: string;
-  fields: FieldSpec[];
-  statusPreset?: {
-    pending: string;
-    approved: string;
-    rejected: string;
-    cancelled: string;
-  };
-  recurrence?: {
-    allowed: boolean;
-    defaultFreq?: "DAILY" | "WEEKLY" | "MONTHLY";
-  };
-}
-
-// Sample BookingTemplates (customize as you want)
-const bookingTemplates: BookingTemplate[] = [
-  {
-    id: "tuition-class-1",
-    label: "Math Tuition – Class",
-    defaultColor: "bg-sky-500",
-    fields: [{ name: "studentName", label: "Student Name", type: "text" }],
-  },
-  {
-    id: "tuition-class-2",
-    label: "Physics Tuition – Class",
-    defaultColor: "bg-green-500",
-    fields: [{ name: "studentName", label: "Student Name", type: "text" }],
-  },
-  {
-    id: "tuition-class-3",
-    label: "Chemistry Tuition – Class",
-    defaultColor: "bg-purple-500",
-    fields: [{ name: "studentName", label: "Student Name", type: "text" }],
-  },
-];
-
-// Generate timeslots every 30 min from 7am to 9pm
-const generateTimeSlots = () => {
-  const slots = [];
-  for (let hour = 7; hour <= 21; hour++) {
-    slots.push(`${hour.toString().padStart(2, "0")}:00`);
-    slots.push(`${hour.toString().padStart(2, "0")}:30`);
-  }
-  return slots;
-};
-
-const timeSlots = generateTimeSlots();
+import {
+  bookingTemplates,
+  timeSlots,
+  maxSlots,
+  BookingTemplate,
+} from "./CalenderConst";
 
 const Calendar: React.FC = () => {
   const [currentEvents, setCurrentEvents] = useState<EventApi[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<DateSelectArg | null>(null);
-
-  // Store selected template id, start time, and duration
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("07:00");
   const [selectedDuration, setSelectedDuration] = useState<number>(30);
@@ -106,8 +54,8 @@ const Calendar: React.FC = () => {
   const handleDateClick = (selected: DateSelectArg) => {
     setSelectedDate(selected);
     setSelectedTemplateId("");
-    setSelectedTime("07:00"); // Reset time on new selection
-    setSelectedDuration(30); // Reset duration on new selection
+    setSelectedTime("07:00");
+    setSelectedDuration(30);
     setIsDialogOpen(true);
   };
 
@@ -126,8 +74,6 @@ const Calendar: React.FC = () => {
     setSelectedTemplateId("");
   };
 
-  const maxSlots = 6;
-
   const handleAddEvent = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTemplateId) {
@@ -138,7 +84,6 @@ const Calendar: React.FC = () => {
       const calendarApi = selectedDate.view.calendar;
       calendarApi.unselect();
 
-      // Compose startDate with date + selected time
       const [hours, minutes] = selectedTime.split(":").map(Number);
       const startDate = new Date(
         selectedDate.start.getFullYear(),
@@ -148,12 +93,10 @@ const Calendar: React.FC = () => {
         minutes
       );
 
-      // Calculate endDate based on duration
       const endDate = new Date(startDate.getTime() + selectedDuration * 60000);
 
       const isRecurring = window.confirm("Make this a recurring weekly event?");
 
-      // Count overlapping events
       const overlappingEventsCount = currentEvents.filter((event) => {
         const eventStart = event.start!;
         const eventEnd = event.end || new Date(eventStart.getTime() + 30 * 60000);
