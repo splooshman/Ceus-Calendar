@@ -23,8 +23,10 @@ import {
   bookingTemplates,
   timeSlots,
   maxSlots,
-  BookingTemplate,
 } from "./CalendarConst";
+
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
 
 const Calendar: React.FC = () => {
   const [currentEvents, setCurrentEvents] = useState<EventApi[]>([]);
@@ -34,6 +36,9 @@ const Calendar: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string>("07:00");
   const [selectedDuration, setSelectedDuration] = useState<number>(30);
   const [selectedTutor, setSelectedTutor] = useState<string>("");
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+
+  const { width, height } = useWindowSize();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -142,6 +147,9 @@ const Calendar: React.FC = () => {
           };
 
       calendarApi.addEvent(newEvent);
+      setShowSuccess(true);
+
+      setTimeout(() => setShowSuccess(false), 7000);
       handleCloseDialog();
     }
   };
@@ -149,7 +157,49 @@ const Calendar: React.FC = () => {
   const router = useRouter();
 
   return (
-    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen relative">
+    {showSuccess && (
+    <>
+    <Confetti width={width} height={height} recycle={false} />
+    <div
+    style={{
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    display: "flex",
+    flexDirection: "column",  // stack vertically
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+    padding: "1rem",
+  }}
+  >
+  <img
+    src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExODV5azZ4czU0NmNwYTcyODJqdThtbHd0ZjRlMGV2d2s1OWUyY2tkaSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/dijK6WYRdSoJEikGPS/giphy.gif"
+    alt="Success"
+    style={{ width: "50vw", height: "auto", borderRadius: "8px", marginBottom: "1rem" }}
+  />
+  <p
+    style={{
+      color: "#064e03", // dark green
+      fontWeight: "bold",
+      fontSize: "1.5rem",
+      textAlign: "center",
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
+      padding: "0.5rem 1rem",
+      borderRadius: "6px",
+      maxWidth: "60vw",
+    }}
+  >
+     🎉 Class Scheduled Successfully!
+  </p>
+  </div>
+  </>
+    )}
+
       <div className="flex w-full px-10 justify-start items-start gap-8 mt-10 max-w-screen-xl mx-auto">
         <div className="w-3/12 border border-[var(--border)] rounded-[var(--radius)] p-6 shadow-sm bg-[var(--card)]">
           <div className="border border-[var(--border)] rounded-[var(--radius)] p-3 text-2xl font-semibold text-center bg-[var(--muted)] text-[var(--foreground)] mb-5">
@@ -350,3 +400,4 @@ const Calendar: React.FC = () => {
 };
 
 export default Calendar;
+
