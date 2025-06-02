@@ -58,7 +58,10 @@
   --accent-foreground: #FFFFFF;
   --destructive: #F87171;
   --ring: #60A5FA;
+  --primary-dark: #1e40af;
 }
+
+
 
 @layer base {
   * {

@@ -28,7 +28,7 @@ import {
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 
-const Calendar: React.FC = () => {
+const BCalendar: React.FC = () => {
   const [currentEvents, setCurrentEvents] = useState<EventApi[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<DateSelectArg | null>(null);
@@ -157,89 +157,96 @@ const Calendar: React.FC = () => {
   const router = useRouter();
 
   return (
-    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen relative">
-    {showSuccess && (
-    <>
-    <Confetti width={width} height={height} recycle={false} />
-    <div
-    style={{
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100vw",
-    height: "100vh",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    display: "flex",
-    flexDirection: "column",  // stack vertically
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-    padding: "1rem",
-  }}
-  >
-  <img
-    src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExODV5azZ4czU0NmNwYTcyODJqdThtbHd0ZjRlMGV2d2s1OWUyY2tkaSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/dijK6WYRdSoJEikGPS/giphy.gif"
-    alt="Success"
-    style={{ width: "50vw", height: "auto", borderRadius: "8px", marginBottom: "1rem" }}
-  />
-  <p
-    style={{
-      color: "#064e03", // dark green
-      fontWeight: "bold",
-      fontSize: "1.5rem",
-      textAlign: "center",
-      backgroundColor: "rgba(255, 255, 255, 0.8)",
-      padding: "0.5rem 1rem",
-      borderRadius: "6px",
-      maxWidth: "60vw",
-    }}
-  >
-     🎉 Class Scheduled Successfully!
-  </p>
-  </div>
-  </>
-    )}
-
-      <div className="flex w-full px-10 justify-start items-start gap-8 mt-10 max-w-screen-xl mx-auto">
-        <div className="w-3/12 border border-[var(--border)] rounded-[var(--radius)] p-6 shadow-sm bg-[var(--card)]">
-          <div className="border border-[var(--border)] rounded-[var(--radius)] p-3 text-2xl font-semibold text-center bg-[var(--muted)] text-[var(--foreground)] mb-5">
-            Scheduled Classes
+    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen relative px-6 py-8">
+      {showSuccess && (
+        <>
+          <Confetti width={width} height={height} recycle={false} />
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+              padding: "1rem",
+            }}
+          >
+            <img
+              src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExODV5azZ4czU0NmNwYTcyODJqdThtbHd0ZjRlMGV2d2s1OWUyY2tkaSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/dijK6WYRdSoJEikGPS/giphy.gif"
+              alt="Success"
+              style={{ width: "50vw", height: "auto", borderRadius: 8, marginBottom: "1rem" }}
+            />
+            <p
+              style={{
+                color: "#064e03",
+                fontWeight: "bold",
+                fontSize: "1.5rem",
+                textAlign: "center",
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                padding: "0.5rem 1rem",
+                borderRadius: 6,
+                maxWidth: "60vw",
+              }}
+            >
+              🎉 Class Scheduled Successfully!
+            </p>
           </div>
-          <ul className="space-y-4">
-            {currentEvents.length <= 0 && (
-              <div className="italic text-center text-muted-foreground">
-                No Classes Scheduled
-              </div>
-            )}
-            {currentEvents.length > 0 &&
-              currentEvents.map((event: EventApi) => (
-                <li
-                  key={event.id}
-                  className={`border px-4 py-2 rounded-[var(--radius)] shadow text-[var(--primary)] ${
-                    event.backgroundColor || "bg-gray-200"
-                  }`}
-                  style={{
-                    backgroundColor:
-                      (event.backgroundColor as string) || undefined,
-                  }}
-                >
-                  {event.title}
-                  <br />
-                  <label className="text-[var(--foreground)] text-sm">
-                    {formatDate(event.start!, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
-                  </label>
-                </li>
-              ))}
-          </ul>
+        </>
+      )}
+
+      <div className="flex max-w-screen-xl mx-auto gap-8">
+        {/* Sidebar */}
+        <div className="flex flex-col w-[20%] h-full gap-6 overflow-y-auto">
+          <div className="border border-[var(--border)] rounded-[var(--radius)] shadow-sm bg-[var(--card)]">
+            <div className="p-3 text-xl font-semibold text-center bg-[var(--muted)] text-[var(--foreground)] border-b border-[var(--border)]">
+              Scheduled Classes
+            </div>
+            <ul className="p-4 space-y-3 max-h-[35vh] overflow-y-auto">
+              {currentEvents.length === 0 ? (
+                <div className="italic text-center text-muted-foreground">
+                  No Classes Scheduled
+                </div>
+              ) : (
+                currentEvents.map((event) => (
+                  <li
+                    key={`scheduled-${event.id}`}
+                    className="p-3 rounded-[var(--radius)] shadow-sm text-sm text-[var(--primary)]"
+                    style={{ backgroundColor: event.backgroundColor || "#e2e8f0" }}
+                  >
+                    {event.title}
+                    <br />
+                    <span className="text-[var(--foreground)] text-xs">
+                      {formatDate(event.start!, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+
+          {/* Empty Requests Box */}
+          <div className="border border-[var(--border)] rounded-[var(--radius)] shadow-sm bg-[var(--card)] h-[35vh]">
+            <div className="p-3 text-xl font-semibold text-center bg-[var(--muted)] text-[var(--foreground)] border-b border-[var(--border)]">
+              Requests
+            </div>
+            {/* Empty body, no functionality */}
+          </div>
         </div>
 
-        <div className="w-9/12 mt-8">
+        {/* Calendar */}
+        <div className="w-[75%] mt-2">
           <FullCalendar
             timeZone="local"
             height="85vh"
@@ -266,12 +273,11 @@ const Calendar: React.FC = () => {
         </div>
       </div>
 
+      {/* Schedule Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="bg-[var(--card)] text-[var(--foreground)]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">
-              Schedule a Class
-            </DialogTitle>
+            <DialogTitle className="text-xl font-semibold">Schedule a Class</DialogTitle>
           </DialogHeader>
           <form className="space-y-4 mt-4" onSubmit={handleAddEvent}>
             <label className="block font-medium mb-1" htmlFor="templateSelect">
@@ -299,10 +305,7 @@ const Calendar: React.FC = () => {
 
             {selectedTemplateId && (
               <>
-                <label
-                  className="block font-medium mt-4 mb-1"
-                  htmlFor="tutorSelect"
-                >
+                <label className="block font-medium mt-4 mb-1" htmlFor="tutorSelect">
                   Select Tutor
                 </label>
                 <select
@@ -323,75 +326,56 @@ const Calendar: React.FC = () => {
                       </option>
                     ))}
                 </select>
+
+                <label className="block font-medium mt-4 mb-1" htmlFor="timeSelect">
+                  Select Start Time
+                </label>
+                <select
+                  id="timeSelect"
+                  value={selectedTime}
+                  onChange={(e) => setSelectedTime(e.target.value)}
+                  className="w-full border border-[var(--border)] p-3 rounded-[var(--radius)] bg-[var(--background)] text-[var(--foreground)]"
+                >
+                  {timeSlots.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+                </select>
+
+                <label className="block font-medium mt-4 mb-1" htmlFor="durationSelect">
+                  Duration (minutes)
+                </label>
+                <select
+                  id="durationSelect"
+                  value={selectedDuration}
+                  onChange={(e) => setSelectedDuration(Number(e.target.value))}
+                  className="w-full border border-[var(--border)] p-3 rounded-[var(--radius)] bg-[var(--background)] text-[var(--foreground)]"
+                >
+                  {[30, 60, 90, 120].map((duration) => (
+                    <option key={duration} value={duration}>
+                      {duration}
+                    </option>
+                  ))}
+                </select>
               </>
             )}
 
-            <label className="block font-medium mt-4 mb-1" htmlFor="timeSelect">
-              Select Start Time
-            </label>
-            <select
-              id="timeSelect"
-              value={selectedTime}
-              onChange={(e) => setSelectedTime(e.target.value)}
-              required
-              className="w-full border border-[var(--border)] p-3 rounded-[var(--radius)] bg-[var(--background)] text-[var(--foreground)]"
-            >
-              {timeSlots.map((slot) => (
-                <option key={slot} value={slot}>
-                  {slot}
-                </option>
-              ))}
-            </select>
-
-            <label
-              className="block font-medium mt-4 mb-1"
-              htmlFor="durationSelect"
-            >
-              Duration (minutes)
-            </label>
-            <select
-              id="durationSelect"
-              value={selectedDuration}
-              onChange={(e) => setSelectedDuration(parseInt(e.target.value, 10))}
-              required
-              className="w-full border border-[var(--border)] p-3 rounded-[var(--radius)] bg-[var(--background)] text-[var(--foreground)]"
-            >
-              <option value={30}>30</option>
-              <option value={60}>60</option>
-              <option value={90}>90</option>
-            </select>
-
-            {selectedDate && (
-              <div className="text-sm text-muted-foreground mt-2">
-                Remaining slots for this time:{" "}
-                {maxSlots -
-                  currentEvents.filter((event) => {
-                    const [hours, minutes] = selectedTime.split(":").map(Number);
-                    const startDate = new Date(
-                      selectedDate.start.getFullYear(),
-                      selectedDate.start.getMonth(),
-                      selectedDate.start.getDate(),
-                      hours,
-                      minutes
-                    );
-                    const endDate = new Date(
-                      startDate.getTime() + selectedDuration * 60000
-                    );
-                    const eventStart = event.start!;
-                    const eventEnd =
-                      event.end || new Date(eventStart.getTime() + 30 * 60000);
-                    return startDate < eventEnd && endDate > eventStart;
-                  }).length}
-                /{maxSlots}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="bg-[var(--primary)] text-[var(--primary-foreground)] px-4 py-2 mt-4 rounded-[var(--radius)] hover:bg-[var(--accent)] transition"
-            >
-              Schedule Class
-            </button>
+            <div className="flex justify-end mt-6 gap-4">
+              <button
+                type="button"
+                onClick={handleCloseDialog}
+                className="px-6 py-2 border border-[var(--border)] rounded-[var(--radius)] hover:bg-[var(--muted)]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-[var(--primary)] text-[var(--background)] px-6 py-2 rounded-[var(--radius)] hover:bg-[#1e40af] disabled:opacity-50"
+              >
+                Schedule
+              </button>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
@@ -399,5 +383,4 @@ const Calendar: React.FC = () => {
   );
 };
 
-export default Calendar;
-
+export default BCalendar;
