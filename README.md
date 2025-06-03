@@ -5,7 +5,7 @@ This application was built with Next.js, typescript, and some components from Re
 
 
 Running the Server:
-After installing the relevant dependencies e.g. npm install, we are able to run the development server:
+After installing the relevant dependencies e.g. npm install, we are able to run the development server in 'ziyuan_app':
 
 
 ```bash
