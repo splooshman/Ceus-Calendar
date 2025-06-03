@@ -36,6 +36,8 @@ As a business, users are able to view booking requests made by customers, as wel
 
 As a customer, users are able to submit booking requests for business approval.
 
+For all scheduled events, there is also a maximum slot of 3 in place: Users are only allowed to schedule a maximum of 3 events for the same time slot.
+
 
 ***Issues***
 With no backend implementation, I am currently unable to store data of the scheduled classes properly, and can only do so on local data storage; as a result, the scheduled classes of users will be cleared after refreshing the browser. Additionally, this also limits the functionality of the application for users to properly send and request for classes (only the frontend UI/UX for this function is implemented). 
