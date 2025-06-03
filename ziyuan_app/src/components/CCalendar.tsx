@@ -170,7 +170,7 @@ const CCalendar: React.FC = () => {
     height: "100vh",
     backgroundColor: "rgba(0,0,0,0.5)",
     display: "flex",
-    flexDirection: "column",  // stack vertically
+    flexDirection: "column",  
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,

@@ -17,7 +17,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "../components/ui/dialog";
 import { useRouter } from "next/navigation";
 import {
   bookingTemplates,
@@ -154,7 +154,6 @@ const BCalendar: React.FC = () => {
     }
   };
 
-  const router = useRouter();
 
   return (
     <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen relative px-6 py-8">
@@ -201,7 +200,6 @@ const BCalendar: React.FC = () => {
       )}
 
       <div className="flex max-w-screen-xl mx-auto gap-8">
-        {/* Sidebar */}
         <div className="flex flex-col w-[20%] h-full gap-6 overflow-y-auto">
           <div className="border border-[var(--border)] rounded-[var(--radius)] shadow-sm bg-[var(--card)]">
             <div className="p-3 text-xl font-semibold text-center bg-[var(--muted)] text-[var(--foreground)] border-b border-[var(--border)]">
@@ -236,16 +234,13 @@ const BCalendar: React.FC = () => {
             </ul>
           </div>
 
-          {/* Empty Requests Box */}
           <div className="border border-[var(--border)] rounded-[var(--radius)] shadow-sm bg-[var(--card)] h-[35vh]">
             <div className="p-3 text-xl font-semibold text-center bg-[var(--muted)] text-[var(--foreground)] border-b border-[var(--border)]">
               Requests
             </div>
-            {/* Empty body, no functionality */}
           </div>
         </div>
 
-        {/* Calendar */}
         <div className="w-[75%] mt-2">
           <FullCalendar
             timeZone="local"
@@ -273,7 +268,6 @@ const BCalendar: React.FC = () => {
         </div>
       </div>
 
-      {/* Schedule Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="bg-[var(--card)] text-[var(--foreground)]">
           <DialogHeader>
@@ -384,3 +378,5 @@ const BCalendar: React.FC = () => {
 };
 
 export default BCalendar;
+
+
